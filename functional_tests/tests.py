@@ -1,15 +1,20 @@
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
-import unittest
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
+    # port = 8000
+    
+    @classmethod
+    def setUpClass(cls):
+        super(NewVisitorTest, cls).setUpClass()
+        cls.browser = webdriver.Firefox()
 
-    def setUp(self):
-        self.browser = webdriver.Firefox()
-
-    def tearDown(self):
-        self.browser.quit()
+    @classmethod
+    def tearDownClass(cls):
+        cls.browser.quit()
+        super(NewVisitorTest, cls).tearDownClass()
 
     def check_for_row_in_list_table(self, row_text):
         table = self.browser.find_element_by_id('list_table')
@@ -20,7 +25,7 @@ class NewVisitorTest(unittest.TestCase):
     def test_can_start_a_list_and_retrieve_it_later(self):
         # Edith has heard about a cool new online to-do app. She goes
         # to check out its homepage
-        self.browser.get('http://127.0.0.1:8000/lists')
+        self.browser.get('%s%s' % (self.live_server_url, '/lists/'))
 
         # She notices the page title and header mention to-do lists
         self.assertIn('To-Do', self.browser.title)
@@ -65,7 +70,3 @@ class NewVisitorTest(unittest.TestCase):
         # She visits that URL - her to-do list is still there.
 
         # Satisfied, she goes back to sleep
-
-
-if __name__ == '__main__':
-    unittest.main()
