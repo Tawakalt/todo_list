@@ -93,7 +93,7 @@ class NewVisitorTest(LiveServerTestCase):
         # ​Francis visits the home page.  There is no sign of Edith's
         # list
         self.browser.get('%s%s' % (self.live_server_url, '/'))
-        page_text = self.browser.find_element_by_tag_name('body').header_text
+        page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Buy peacock feathers', page_text)
 
         # ​Francis starts a new list by entering a new item. He
@@ -109,9 +109,8 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertNotEqual(francis_list_url, edith_list_url)
 
         # ​Again, there is no trace of Edith's list
-        page_text = self.browser.find_element_by_tag_name('body').header_text
+        page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Buy peacock feathers', page_text)
         self.assertIn('Buy milk', page_text)
 
         # Satisfied, they both go back to sleep
-
