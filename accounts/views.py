@@ -1,11 +1,23 @@
 import sys, uuid
+from django.contrib.auth import (
+    authenticate, 
+    login as auth_login,
+    logout as auth_logout,
+)
 from django.core.mail import send_mail
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from accounts.models import Token
 
 
 # Create your views here.
+def login(request):
+    print('Login view', file=sys.stderr)
+    uid = request.GET.get('uid')
+    user = authenticate(uid)
+    if user is not None:
+        auth_login(request, user)
+    return redirect('/')
 
 def send_login_email(request):
     email = request.POST['email']
@@ -20,3 +32,7 @@ def send_login_email(request):
         [email],
     )
     return render(request, 'login_email_sent.html')
+
+def logout(request):
+    auth_logout(request)
+    return redirect('/')
