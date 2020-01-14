@@ -1,5 +1,6 @@
 from django.test import TestCase
 from unittest.mock import patch, call
+from user_accounts.models import Token
 
 class SendLoginEmailViewTest(TestCase):
 
@@ -57,3 +58,13 @@ class LoginViewTest(TestCase):
     def test_redirects_to_home_page(self):
         response = self.client.get('/user_accounts/login?token=abcd123')
         self.assertRedirects(response, '/')
+
+    def test_creates_token_associated_with_email(self):
+        self.client.post(
+            '/user_accounts/send_login_email',
+            data = {'email': 'olaniyitawakalt95test@gmail.com'}
+        )
+        token = Token.objects.first()
+        self.assertEqual(token.email, 'olaniyitawakalt95test@gmail.com')
+
+    
