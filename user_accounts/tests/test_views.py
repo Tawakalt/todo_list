@@ -67,4 +67,14 @@ class LoginViewTest(TestCase):
         token = Token.objects.first()
         self.assertEqual(token.email, 'olaniyitawakalt95test@gmail.com')
 
-    
+    @patch('user_accounts.views.send_mail')
+    def test_send_link_to_login_using_token_uid(self, mock_send_mail):
+        self.client.post(
+            '/user_accounts/send_login_email',
+            data = {'email': 'olaniyitawakalt95test@gmail.com'}
+        )
+
+        token = Token.objects.first()
+        expected_url = f'http://testserver/user_accounts/login?token={token.uid}'
+        (subject, body, from_email, to_list), kwargs = mock_send_mail.call_args
+        self.assertIn(expected_url, body)
