@@ -52,21 +52,6 @@ class SendLoginEmailViewTest(TestCase):
             call(response.wsgi_request, expected),
         )
 
-
-class LoginViewTest(TestCase):
-
-    def test_redirects_to_home_page(self):
-        response = self.client.get('/user_accounts/login?token=abcd123')
-        self.assertRedirects(response, '/')
-
-    def test_creates_token_associated_with_email(self):
-        self.client.post(
-            '/user_accounts/send_login_email',
-            data = {'email': 'olaniyitawakalt95test@gmail.com'}
-        )
-        token = Token.objects.first()
-        self.assertEqual(token.email, 'olaniyitawakalt95test@gmail.com')
-
     @patch('user_accounts.views.send_mail')
     def test_send_link_to_login_using_token_uid(self, mock_send_mail):
         self.client.post(
@@ -79,7 +64,22 @@ class LoginViewTest(TestCase):
         (subject, body, from_email, to_list), kwargs = mock_send_mail.call_args
         self.assertIn(expected_url, body)
 
-    @patch('user_accounts.views.auth')
+
+@patch('user_accounts.views.auth')
+class LoginViewTest(TestCase):
+
+    def test_redirects_to_home_page(self, mock_auth):
+        response = self.client.get('/user_accounts/login?token=abcd123')
+        self.assertRedirects(response, '/')
+
+    def test_creates_token_associated_with_email(self, mock_auth):
+        self.client.post(
+            '/user_accounts/send_login_email',
+            data = {'email': 'olaniyitawakalt95test@gmail.com'}
+        )
+        token = Token.objects.first()
+        self.assertEqual(token.email, 'olaniyitawakalt95test@gmail.com')
+
     def test_calls_authenticate_with_uid_from_get_request(self, mock_auth):
         self.client.get('/user_accounts/login?token=abcd123')
         self.assertEqual(
@@ -87,7 +87,6 @@ class LoginViewTest(TestCase):
             call(uid='abcd123')
         )
 
-    @patch('user_accounts.views.auth')
     def test_calls_auth_login_with_user_if_there_is_one(self, mock_auth):
         response = self.client.get('/user_accounts/login?token=abcd123')
         self.assertEqual(
@@ -95,7 +94,6 @@ class LoginViewTest(TestCase):
             call(response.wsgi_request, mock_auth.authenticate.return_value)
         )
 
-    @patch('user_accounts.views.auth')
     def test_does_not_login_if_user_is_not_authenticated(self, mock_auth):
         mock_auth.authenticate.return_value = None
         self.client.get('/user_accounts/login?token=abcd123')
