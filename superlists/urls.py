@@ -19,4 +19,5 @@ from lists import views
 urlpatterns = [
     path('', views.home_page, name='home'),
     path('lists/', include("lists.urls")),
+    path('user_accounts/', include("user_accounts.urls")),
 ]
