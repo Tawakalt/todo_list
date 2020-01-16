@@ -3,7 +3,7 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
 from unittest import skip
-import time
+import os, time
 
 MAX_WAIT = 10
 
@@ -14,6 +14,10 @@ class FunctionalTest(StaticLiveServerTestCase):
     def setUpClass(cls):
         super(FunctionalTest, cls).setUpClass()
         cls.browser = webdriver.Firefox()
+        cls.staging_server = os.getenv('STAGING_SERVER')
+        if cls.staging_server:
+            cls.live_server_url = 'https://' + cls.staging_server
+
 
     @classmethod
     def tearDownClass(cls):
