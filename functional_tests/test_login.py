@@ -64,7 +64,10 @@ class LoginTest(FunctionalTest):
 
         # It has a url link in it
         self.assertIn('Use this link to log in', body)
-        url_search = re.search(r'https://.+/.+$', body)
+        if self.staging_server:
+            url_search = re.search(r'https://.+/.+$', body)
+        else:
+            url_search = re.search(r'http://.+/.+$', body)
         if not url_search:
             self.fail(f'Could not find url in email body:\n{body}')
         url = url_search.group(0)

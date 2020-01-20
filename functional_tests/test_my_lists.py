@@ -17,7 +17,7 @@ class MyListTest(FunctionalTest):
         self.browser.get('%s%s' % (self.live_server_url, '/404_no_such_url/'))
         self.browser.add_cookie(dict(
             name=settings.SESSION_COOKIE_NAME,
-            value=session.session_key,
+            value=session_key,
             path='/'
         ))
 
