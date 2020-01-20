@@ -4,6 +4,7 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
 from unittest import skip
 import os, time
+from .server_tools import reset_database
 
 MAX_WAIT = 10
 
@@ -17,6 +18,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         cls.staging_server = os.getenv('STAGING_SERVER')
         if cls.staging_server:
             cls.live_server_url = 'https://' + cls.staging_server
+            reset_database()
 
 
     @classmethod
