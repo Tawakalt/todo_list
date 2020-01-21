@@ -53,7 +53,7 @@ class MyListTest(FunctionalTest):
         # She decides to start another list just to see
         self.browser.get(self.live_server_url)
         self.add_list_item("Make dinner")
-        second_url_list = self.browser.current_url
+        second_list_url = self.browser.current_url
         # Under "My lists" her new list appears
         self.browser.find_element_by_link_text('My Lists').click()
         self.wait_for(
