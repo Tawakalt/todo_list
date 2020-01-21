@@ -1,7 +1,11 @@
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.shortcuts import redirect, render
 from .forms import ItemForm, EMPTY_ITEM_ERROR, ExistingListItemForm
 from .models import Item, List
+
+User = get_user_model()
+
 
 # Create your views here.
 def home_page(request):
@@ -27,4 +31,5 @@ def new_list(request):
         return render(request, 'home.html', {'form': form, 'error': EMPTY_ITEM_ERROR})
     
 def my_lists(request, email):
-    return render(request, 'my_lists.html')
+    owner = User.objects.get(email=email)
+    return render(request, 'my_lists.html', {'owner': owner})

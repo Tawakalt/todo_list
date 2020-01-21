@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils.html import escape
 from lists.forms import (
@@ -7,6 +8,8 @@ from lists.forms import (
     ItemForm
 )
 from lists.models import Item, List
+
+User = get_user_model()
 
 # Create your tests here.
 class HomePageTest(TestCase):
@@ -155,5 +158,12 @@ class NewListTest(TestCase):
 class MyListsTest(TestCase):
 
     def test_my_lists_url_renders_my_lists_template(self):
+        User.objects.create(email='ab@c.com')
         response = self.client.get(f'/lists/users/ab@c.com/')
         self.assertTemplateUsed(response, 'my_lists.html')
+
+    def test_passes_correct_owner_to_template(self):
+        User.objects.create(email='wrongowner@a.com')
+        correct_user = User.objects.create(email='ab@c.com')
+        response = self.client.get(f'/lists/users/ab@c.com/')
+        self.assertEqual(response.context['owner'], correct_user)
