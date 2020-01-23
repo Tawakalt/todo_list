@@ -12,7 +12,6 @@ from lists.forms import (
 )
 from lists.models import Item, List
 from lists.views import new_list2
-from unittest import skip
 from unittest.mock import patch
 import unittest
 
@@ -155,13 +154,11 @@ class NewListViewIntegratedTest(TestCase):
         response = self.client.post('/lists/new', data={'text':''})
         self.assertIsInstance(response.context['form'], ItemForm)
 
-
     def test_invalid_list_items_are_not_saved(self):
         self.client.post('/lists/new', data={'text':''})
         self.assertEqual(List.objects.count(), 0)
         self.assertEqual(Item.objects.count(), 0)
-
-    @skip
+    
     def test_list_owner_is_saved_if_user_is_authenticated(self):
         user = User.objects.create(email='ab@c.com')
         self.client.force_login(user)
