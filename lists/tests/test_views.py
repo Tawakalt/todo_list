@@ -11,7 +11,7 @@ from lists.forms import (
     ItemForm
 )
 from lists.models import Item, List
-from lists.views import new_list2
+from lists.views import new_list
 from unittest.mock import patch
 import unittest
 
@@ -196,7 +196,7 @@ class NewListViewUnitTest(unittest.TestCase):
     def test_passes_POST_data_to_NewListForm(
         self, mock_redirect, mockNewListForm
     ):
-        response = new_list2(self.request)
+        response = new_list(self.request)
 
         self.assertEqual(response, mock_redirect.return_value)
         mockNewListForm.assert_called_once_with(data=self.request.POST)
@@ -207,7 +207,7 @@ class NewListViewUnitTest(unittest.TestCase):
     ):
         mock_form = mockNewListForm.return_value
         mock_form.is_valid.return_value = True
-        response = new_list2(self.request)
+        response = new_list(self.request)
 
         self.assertEqual(response, mock_redirect.return_value)
         mockNewListForm.assert_called_once_with(data=self.request.POST)
@@ -219,7 +219,7 @@ class NewListViewUnitTest(unittest.TestCase):
         mock_form = mockNewListForm.return_value
         mock_form.is_valid.return_value = True
 
-        response = new_list2(self.request)
+        response = new_list(self.request)
 
         self.assertEqual(response, mock_redirect.return_value)
         mock_redirect.assert_called_once_with(mock_form.save.return_value)
@@ -231,7 +231,7 @@ class NewListViewUnitTest(unittest.TestCase):
         mock_form = mockNewListForm.return_value
         mock_form.is_valid.return_value = False
 
-        response = new_list2(self.request)
+        response = new_list(self.request)
 
         self.assertEqual(response, mock_render.return_value)
         mock_render.assert_called_once_with(
