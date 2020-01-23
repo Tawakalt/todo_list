@@ -38,7 +38,7 @@ def new_list2(request):
     if form.is_valid():
         list_ = form.save(owner=request.user)
         return redirect(list_)
-    return redirect(request, 'home.html', {'form' : form})
+    return render(request, 'home.html', {'form' : form, 'error': EMPTY_ITEM_ERROR})
 
 def my_lists(request, email):
     owner = User.objects.get(email=email)
