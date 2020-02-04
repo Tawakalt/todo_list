@@ -1,4 +1,4 @@
-![Build Status](https://travis-ci.com/Tawakalt/todo_list.svg?branch=travis)
+[![Build Status](https://travis-ci.com/Tawakalt/todo_list.svg?branch=develop)](https://travis-ci.com/Tawakalt/todo_list)
 
 
 # todo_list
