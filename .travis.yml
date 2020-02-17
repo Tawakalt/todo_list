@@ -1,19 +1,28 @@
 language: python
 python:
   - "3.8"
-# command to install dependencies
-install:
-  - pip install -r requirements.txt
-# needed for FTs
+# needed before test scripts run
 before_script:
+  # needed for FTs
   - wget "https://github.com/mozilla/geckodriver/releases/download/v0.24.0/geckodriver-v0.24.0-linux64.tar.gz"
   - tar xfz geckodriver-v0.24.0-linux64.tar.gz
   - sudo mv geckodriver /usr/local/bin
   - 'export DISPLAY=:99.0'
   - Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
   - sleep 3
+  # needed for codeclimate
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+# command to install dependencies
+install:
+  - pip install -r requirements.txt
+  - pip install coverage
 # command to run tests
 script:
-  - python manage.py test lists
-  - python manage.py test user_accounts
-  - python manage.py test functional_tests
+  - coverage run manage.py test lists
+  - coverage run manage.py test user_accounts
+  - coverage run manage.py test functional_tests
+after_script:
+  - coverage xml
+  - if [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_PYTHON_VERSION" == "3.8" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
