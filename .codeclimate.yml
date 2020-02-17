@@ -1,0 +1,5 @@
+exclude_patterns:
+- "functional_tests/"
+- "node_modules/"
+- "**/static/"
+- "**/tests"
