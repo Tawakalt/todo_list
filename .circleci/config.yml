@@ -1,0 +1,60 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@0.2.1
+  browser-tools: circleci/browser-tools@0.1.4
+
+jobs:
+  build-and-test:
+    executor: python/default
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      - run:
+          name: Install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            sudo pip install -r ./requirements.txt
+            sudo pip install coverage
+            sudo pip install coveralls
+      - save_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+          paths:
+            - "venv"
+      - run:
+          name: FTs Setup
+          command: |
+            wget "https://github.com/mozilla/geckodriver/releases/download/v0.26.0/geckodriver-v0.26.0-linux64.tar.gz"
+            tar xfz geckodriver-v0.26.0-linux64.tar.gz
+            chmod +x geckodriver
+            sudo mv geckodriver /usr/local/bin
+            export PATH=$PATH:/bin/geckodriver
+            wget "https://ftp.mozilla.org/pub/firefox/releases/70.0.1/linux-x86_64/en-GB/firefox-70.0.1.tar.bz2"
+            tar xvf firefox-70.0.1.tar.bz2
+            sudo mv firefox/ /usr/lib/firefox
+            sudo ln -s /usr/lib/firefox/firefox /usr/bin/firefox
+      - run:
+          name: CodeClimate Setup
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+            ./cc-test-reporter before-build
+      - run:
+          name: Test
+          command: |
+            . venv/bin/activate
+            coverage run manage.py test lists
+            coverage run manage.py test user_accounts
+      - run:
+          name: Send Coverage
+          command: |
+            coveralls
+            coverage xml  
+            ./cc-test-reporter after-build
+
+workflows:
+  main:
+    jobs:
+      - build-and-test
