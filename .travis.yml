@@ -18,6 +18,7 @@ before_script:
 install:
   - pip install -r requirements.txt
   - pip install coverage
+  - pip install coveralls
 # command to run tests
 script:
   - coverage run manage.py test lists
@@ -26,3 +27,4 @@ script:
 after_script:
   - coverage xml
   - if [[ "$TRAVIS_PULL_REQUEST" == "false" && "$TRAVIS_PYTHON_VERSION" == "3.8" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
+  - coveralls
