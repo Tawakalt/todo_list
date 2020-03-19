@@ -11,3 +11,11 @@
         {% endfor %}
     </table>
 {% endblock %}
+
+{% block share %}
+    <form class="navbar-form navbar-right" method="POST" action="{% url 'send_share_email' %}">
+        <span>Enter email to log in:</span>
+        <input class="form-control" name="share" type="text" placeholder="ab@c.com"/>
+        {% csrf_token %}
+    </form>
+{% endblock %}

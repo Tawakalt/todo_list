@@ -31,3 +31,10 @@ def new_list(request):
 def my_lists(request, email):
     owner = User.objects.get(email=email)
     return render(request, 'my_lists.html', {'owner': owner})
+
+def send_share_email(request, list_id):
+    email = request.POST['share']
+    list_ = List.objects.get(id=list_id)
+    form = ExistingListItemForm(for_list=list_)
+    print('Shared with email')
+    return render(request, 'list.html', {'list': list_, 'form': form, 'error': EMPTY_ITEM_ERROR})

@@ -245,3 +245,12 @@ class NewListViewUnitTest(unittest.TestCase):
         mock_form.is_valid.return_value = False
 
         self.assertFalse(mock_form.save.called)
+
+
+class ShareListTest(TestCase):
+
+    def test_POST_redirects_to_lists_page(self):
+        list_ = List.objects.create()
+        response = self.client.get(f'/lists/{list_.id}/')
+        self.assertRedirects(response, f'/lists/{list_.id}/')
+
